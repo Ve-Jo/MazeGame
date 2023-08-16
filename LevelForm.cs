@@ -1,3 +1,4 @@
+using System;
 using System.Media;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
@@ -16,7 +17,9 @@ namespace Maze
         int energyUsageCooldown;
 
         int movementSteps = 0;
+        int totalMovementSteps = 0;
 
+        private DateTime gameStartTime;
         private bool bombPlaced = false;
         private List<Point> placedBombs = new List<Point>();
 
@@ -75,6 +78,7 @@ namespace Maze
             ResetVariables();
             CalculateTotalMedals();
             UpdateLabel();
+            gameStartTime = DateTime.Now;
             background.PlayLooping();
         }
 
@@ -283,6 +287,10 @@ namespace Maze
         public void UpdateStatusLabel()
         {
             Text = Configuration.Title.Replace("{medals}", medalCount.ToString()).Replace("{health}", health.ToString()).Replace("{energy}", energy.ToString());
+            toolStripStatusLabel1.Text = $"Здоровье: {health}";
+            TimeSpan elapsedTime = DateTime.Now - gameStartTime;
+            toolStripStatusLabel2.Text = $"Время: {elapsedTime.ToString(@"mm\:ss")}";
+            toolStripStatusLabel3.Text = $"Шаги: {totalMovementSteps}";
         }
 
         public void HandleRegularMovement(ushort targetX, ushort targetY)
@@ -295,7 +303,8 @@ namespace Maze
 
             CellType targetType = maze.cells[targetY, targetX].Type;
 
-            if (targetType == CellType.BOMB) {
+            if (targetType == CellType.BOMB)
+            {
                 fail.Play();
                 MessageBox.Show("Вы наступили на бомбу", "Поражение", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 health = 0;
@@ -346,7 +355,8 @@ namespace Maze
                 UpdateLabel();
                 Hero.Clear();
                 StartGame();
-            } else
+            }
+            else
             {
                 UpdateHeroPosition(targetX, targetY);
                 HandleAllEnemiesDead();
@@ -364,7 +374,7 @@ namespace Maze
                 win.Play();
                 MessageBox.Show("Вы собрали все медали!", "Коллекционер", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            
+
         }
 
         public void HandleAllEnemiesDead()
@@ -490,6 +500,7 @@ namespace Maze
             if (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left || e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
             {
                 movementSteps++;
+                totalMovementSteps++;
             }
 
             // Set lastTravelDirection based on arrow keys
