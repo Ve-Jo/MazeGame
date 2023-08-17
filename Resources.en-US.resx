@@ -117,8 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing">
-    <value>17, 17</value>
+  <data name="BombDied" xml:space="preserve">
+    <value>You died from a bomb</value>
+  </data>
+  <data name="BombPlanted" xml:space="preserve">
+    <value>The bomb is set. Do not step on it, move away from it and detonate it by pressing Space</value>
+  </data>
+  <data name="CoffeMuch" xml:space="preserve">
+    <value>You can't drink coffee that much!</value>
+  </data>
+  <data name="Collector" xml:space="preserve">
+    <value>Collector</value>
+  </data>
+  <data name="Congrats" xml:space="preserve">
+    <value>Congratulations</value>
+  </data>
+  <data name="Defeat" xml:space="preserve">
+    <value>Defeat</value>
+  </data>
+  <data name="EnemiesAll" xml:space="preserve">
+    <value>You have defeated all enemies!</value>
+  </data>
+  <data name="MedalsAll" xml:space="preserve">
+    <value>You collected all the medals!</value>
+  </data>
+  <data name="PeelsMuch" xml:space="preserve">
+    <value>You can't pick up pills since you are healthy!</value>
+  </data>
+  <data name="StatusLabelHealth" xml:space="preserve">
+    <value>Health: {0}</value>
+  </data>
+  <data name="StatusLabelSteps" xml:space="preserve">
+    <value>Steps: {0}</value>
+  </data>
+  <data name="StatusLabelTime" xml:space="preserve">
+    <value>Time: {0}</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Maze ({medals} medals) ({health}% health) ({energy} energy)</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning!</value>
+  </data>
+  <data name="YouDied" xml:space="preserve">
+    <value>You died!</value>
+  </data>
+  <data name="YouWin" xml:space="preserve">
+    <value>You win!</value>
   </data>
 </root>

@@ -1,11 +1,15 @@
 using System;
+using System.ComponentModel;
+using System.Globalization;
 using System.Media;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
+using System.Windows.Forms;
 
 namespace Maze
 {
     public partial class LevelForm : Form
     {
+        private CultureInfo currentCulture;
+
         public Maze maze;
         public Character Hero;
         public Random random;
@@ -47,14 +51,70 @@ namespace Maze
         public LevelForm()
         {
             InitializeComponent();
+            InitializeLocalization();
             ConfigureForm();
             StartGame();
             random = new Random();
         }
 
+        private void InitializeLocalization()
+        {
+            currentCulture = CultureInfo.DefaultThreadCurrentUICulture;
+
+            ToolStripButton englishButton = new ToolStripButton();
+            englishButton.Image = Properties.Resources.english_flag; // Replace with actual image
+            englishButton.Click += (sender, e) => ChangeLanguage(CultureInfo.GetCultureInfo("en-US"));
+
+            ToolStripButton ukrainianButton = new ToolStripButton();
+            ukrainianButton.Image = Properties.Resources.ukraine_flag; // Replace with actual image
+            ukrainianButton.Click += (sender, e) => ChangeLanguage(CultureInfo.GetCultureInfo("uk-UA"));
+
+            ToolStripButton polishButton = new ToolStripButton();
+            polishButton.Image = Properties.Resources.poland_flag; // Replace with actual image
+            polishButton.Click += (sender, e) => ChangeLanguage(CultureInfo.GetCultureInfo("pl-PL"));
+
+            statusStrip1.Items.Add(englishButton);
+            statusStrip1.Items.Add(ukrainianButton);
+            statusStrip1.Items.Add(polishButton);
+        }
+
+
+        private void ChangeLanguage(CultureInfo culture)
+        {
+            if (currentCulture != culture)
+            {
+                currentCulture = culture;
+
+                // Check if the selected culture is Ukrainian
+                if (culture.Name == "uk-UA")
+                {
+                    // If Ukrainian is selected, set the CurrentUICulture to InvariantCulture
+                    Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                }
+                else
+                {
+                    // Otherwise, set the CurrentUICulture to the selected culture
+                    Thread.CurrentThread.CurrentUICulture = culture;
+                }
+
+                ComponentResourceManager resources = new ComponentResourceManager(typeof(LevelForm));
+                resources.ApplyResources(this, "$this");
+                ApplyResources(resources, Controls);
+            }
+        }
+
+        private void ApplyResources(ComponentResourceManager resources, Control.ControlCollection controls)
+        {
+            foreach (Control control in controls)
+            {
+                resources.ApplyResources(control, control.Name);
+                ApplyResources(resources, control.Controls);
+            }
+        }
+
         public void ConfigureForm()
         {
-            Text = Configuration.Title;
+            Text = Properties.Resources.Title;
             BackColor = Configuration.Background;
             ClientSize = new Size(Configuration.Columns * Configuration.PictureSide, Configuration.Rows * Configuration.PictureSide);
             StartPosition = FormStartPosition.CenterScreen;
@@ -191,7 +251,7 @@ namespace Maze
                 maze.cells[bombY, bombX].Type = CellType.BOMB;
                 placedBombs.Add(new Point(Hero.PosX, Hero.PosY));
 
-                MessageBox.Show("Бомба установлена. Не наступайте на неё, отойдите подальше и взорвите нажав на Space");
+                MessageBox.Show(Properties.Resources.BombPlanted);
 
                 UpdateLabel();
                 maze.Show();
@@ -222,7 +282,7 @@ namespace Maze
                             if (targetX == Hero.PosX && targetY == Hero.PosY)
                             {
                                 fail.Play();
-                                MessageBox.Show("Вы умерли от бомбы", "Поражение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                MessageBox.Show(Properties.Resources.BombDied, Properties.Resources.Defeat, MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 health = 0;
                                 UpdateLabel();
                                 Hero.Clear();
@@ -274,7 +334,7 @@ namespace Maze
 
         public void ShowDefeatMessageBox()
         {
-            DialogResult result = MessageBox.Show("Вы умерли!", "Поражение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            DialogResult result = MessageBox.Show(Properties.Resources.YouDied, Properties.Resources.Defeat, MessageBoxButtons.OK, MessageBoxIcon.Information);
             fail.Play();
             if (result == DialogResult.OK)
             {
@@ -286,11 +346,16 @@ namespace Maze
 
         public void UpdateStatusLabel()
         {
-            Text = Configuration.Title.Replace("{medals}", medalCount.ToString()).Replace("{health}", health.ToString()).Replace("{energy}", energy.ToString());
-            toolStripStatusLabel1.Text = $"Здоровье: {health}";
+            Text = Properties.Resources.Title.Replace("{medals}", medalCount.ToString())
+                                       .Replace("{health}", health.ToString())
+                                       .Replace("{energy}", energy.ToString());
+
+            toolStripStatusLabel1.Text = string.Format(Properties.Resources.StatusLabelHealth, health);
+
             TimeSpan elapsedTime = DateTime.Now - gameStartTime;
-            toolStripStatusLabel2.Text = $"Время: {elapsedTime.ToString(@"mm\:ss")}";
-            toolStripStatusLabel3.Text = $"Шаги: {totalMovementSteps}";
+            toolStripStatusLabel2.Text = string.Format(Properties.Resources.StatusLabelTime, elapsedTime.ToString(@"mm\:ss"));
+
+            toolStripStatusLabel3.Text = string.Format(Properties.Resources.StatusLabelSteps, totalMovementSteps);
         }
 
         public void HandleRegularMovement(ushort targetX, ushort targetY)
@@ -306,7 +371,7 @@ namespace Maze
             if (targetType == CellType.BOMB)
             {
                 fail.Play();
-                MessageBox.Show("Вы наступили на бомбу", "Поражение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.BombDied, Properties.Resources.Defeat, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 health = 0;
                 UpdateLabel();
                 Hero.Clear();
@@ -372,7 +437,7 @@ namespace Maze
             if (medalCount == totalMedals)
             {
                 win.Play();
-                MessageBox.Show("Вы собрали все медали!", "Коллекционер", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.MedalsAll, Properties.Resources.Collector, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
         }
@@ -397,7 +462,7 @@ namespace Maze
             if (allEnemiesDead)
             {
                 win.Play();
-                MessageBox.Show("Вы победили всех врагов!", "Победа", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.EnemiesAll, Properties.Resources.YouWin, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -405,7 +470,7 @@ namespace Maze
         {
             if (energyUsageCooldown > 0)
             {
-                MessageBox.Show("Вы не можете так часто пить кофе!", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.CoffeMuch, Properties.Resources.Warning, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 energyUsageCooldown++;
             }
             else
@@ -422,7 +487,7 @@ namespace Maze
         {
             if (health + 5 >= 100)
             {
-                MessageBox.Show("Вы не можете подбирать таблетки, так как вы здоровы!", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(Properties.Resources.PeelsMuch, Properties.Resources.Warning, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 maze.cells[targetY, targetX].Type = CellType.HEAL;
             }
             else
@@ -437,7 +502,7 @@ namespace Maze
         public void HandleVictory()
         {
             win.Play();
-            DialogResult result = MessageBox.Show("Вы победили!", "Поздравляем", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            DialogResult result = MessageBox.Show(Properties.Resources.YouWin, Properties.Resources.Congrats, MessageBoxButtons.OK, MessageBoxIcon.Information);
             if (result == DialogResult.OK)
             {
                 Hero.Clear();

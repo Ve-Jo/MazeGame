@@ -41,7 +41,7 @@
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2, toolStripStatusLabel3 });
             statusStrip1.Location = new Point(0, 382);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(445, 26);
+            statusStrip1.Size = new Size(882, 26);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -67,7 +67,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(445, 408);
+            ClientSize = new Size(882, 408);
             Controls.Add(statusStrip1);
             Margin = new Padding(3, 4, 3, 4);
             Name = "LevelForm";
